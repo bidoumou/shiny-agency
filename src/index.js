@@ -3,11 +3,10 @@ import ReactDOM from 'react-dom'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import Home from './pages/Home'
 import Survey from './pages/Survey'
+import Results from './pages/Results'
+import Freelances from './pages/Freelances'
 import Header from './components/Header'
 import Error from './components/Error'
-
-// import ClientForm from './components/ClientForm'
-// import FreelanceForm from './components/FreelanceForm'
 
 ReactDOM.render(
     <React.StrictMode>
@@ -16,6 +15,7 @@ ReactDOM.render(
             <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/survey/:questionNumber" element={<Survey />} />
+                <Route path="/results" element={<Results />} />
                 <Route path="*" element={<Error />} />
             </Routes>
         </Router>
