@@ -2,7 +2,7 @@ import Card from '../../components/Card'
 import styled from 'styled-components'
 import colors from '../../utils/style/colors'
 import { Loader } from '../../utils/style/Atoms'
-import { useEffect, useState } from 'react'
+import { useFetch, useTheme } from '../../utils/hooks'
 
 const CardsContainer = styled.div`
     display: grid;
@@ -15,7 +15,7 @@ const CardsContainer = styled.div`
 
 const PageTitle = styled.h1`
     font-size: 30px;
-    color: black;
+    color: ${({ theme }) => (theme === 'light' ? '#000000' : '#FFFFFF')};
     text-align: center;
     padding-bottom: 30px;
 `
@@ -23,8 +23,10 @@ const PageTitle = styled.h1`
 const PageSubtitle = styled.h2`
     font-size: 20px;
     color: ${colors.secondary};
+    font-weight: 300;
     text-align: center;
     padding-bottom: 30px;
+    color: ${({ theme }) => (theme === 'light' ? '#000000' : '#FFFFFF')};
 `
 
 const LoaderWrapper = styled.div`
@@ -33,41 +35,33 @@ const LoaderWrapper = styled.div`
 `
 
 function Freelances() {
-    const [isDataLoading, setDataLoading] = useState(false)
-    const [error, setError] = useState(false)
-    const [freelancersList, setFreelancesList] = useState([])
-
-    useEffect(() => {
-        setDataLoading(true)
-        fetch(`http://localhost:8000/freelances`).then((response) =>
-            response
-                .json()
-                .then(({ freelancersList }) => {
-                    setFreelancesList(freelancersList)
-                    setDataLoading(false)
-                })
-                .catch((error) => setError(true)),
-        )
-    }, [])
+    const { theme } = useTheme()
+    const { data, isLoading, error } = useFetch(
+        `http://localhost:8000/freelances`,
+    )
 
     if (error) {
         return <span>Oups, il y a eu un problème</span>
     }
 
+    const freelancersList = data?.freelancersList
+
     return (
         <div>
-            <PageTitle>Trouvez vos prestataires</PageTitle>
-            <PageSubtitle>Chez Shiny nous réunissons les meilleurs profils pour vous.</PageSubtitle>
-            {isDataLoading ? (
+            <PageTitle theme={theme}>Trouvez vos prestataires</PageTitle>
+            <PageSubtitle theme={theme}>
+                Chez Shiny nous réunissons les meilleurs profils pour vous.
+            </PageSubtitle>
+            {isLoading ? (
                 <LoaderWrapper>
-                    <Loader />
+                    <Loader theme={theme} />
                 </LoaderWrapper>
             ) : (
                 <CardsContainer>
                     {freelancersList.map((profile, index) => (
                         <Card
                             key={`${profile.name}-${index}`}
-                            label={profile.jobTitle}
+                            label={profile.job}
                             title={profile.name}
                             picture={profile.picture}
                         />
